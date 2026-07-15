@@ -4,13 +4,21 @@ interface Props{
 
     setCode:(value:string)=>void;
 
+    openStrategies:()=>void;
+
+    save:()=>void;
+
 }
 
-export default function CommandEditor({
+export default function CommandEditor( {
 
     code,
 
-    setCode
+    setCode,
+
+    openStrategies,
+    
+    save
 
 }:Props){
 
@@ -18,11 +26,13 @@ export default function CommandEditor({
 
         <>
 
-            <h2>Editor de Comandos</h2>
+            <h2 className="editor-title">Editor de Comandos</h2>
 
             <textarea
 
                 value={code}
+
+                spellCheck={false}
 
                 onChange={(e)=>setCode(e.target.value)}
 
@@ -49,6 +59,23 @@ export default function CommandEditor({
                 }}
 
             />
+
+            <div className="editor-actions">
+
+                <button
+                    className="secondary"
+                    onClick={openStrategies}
+                >
+                    📂 Estratégias
+                </button>
+
+                <button
+                    onClick={save}
+                >
+                    💾 Salvar
+                </button>
+
+            </div>
 
         </>
 

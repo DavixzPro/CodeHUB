@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { useRef } from "react";
-import Simulation from "./engine/Simulation.ts";
 
+import { updateStrategy } from "./services/Storage";
+import Simulation from "./engine/Simulation.ts";
 import Dashboard from "./components/Dashboard.tsx";
 import TopBar from "./components/TopBar.tsx";
+import StrategyModal from "./components/StrategyModal.tsx";
 import RobotSettings from "./components/RobotSettings.tsx";
 import CommandEditor from "./components/CommandEditor.tsx";
 import ArenaCanvas from "./components/ArenaCanvas.tsx";
@@ -13,17 +15,29 @@ import Parser from "./engine/Parser.ts";
 
 export default function App(){
 
-    const [code,setCode] = useState(`ligarintake()
+    const [code, setCode] = useState(`// ====================================
+// CodeHub - FTC 2D Autonomous Simulator
+// ====================================
+//
+// Escreva sua estratégia aqui.
+//
+// Exemplos:
+//
+// andarfrente(60,120)
+// giraresquerda(90)
+// ligarintake()
+// ligarshooter()
+// esperar(1000)
+// parar()
+//
+// ====================================
 
-andarfrente(60,120)
+`);
 
-giraresquerda(90)
+    const [showStrategies, setShowStrategies] = useState(false);
+    const [currentStrategy, setCurrentStrategy] = useState<string | null>(null);
 
-andarfrente(40,50)
-
-ligarshooter()
-
-parar()`);
+    const [saveMode, setSaveMode] = useState(false);
 
     function execute(){
 
@@ -34,6 +48,24 @@ parar()`);
         simulationRef.current.start();
 
     }
+
+function save() {
+
+    if (currentStrategy) {
+
+        updateStrategy(currentStrategy, code);
+
+        alert("Estratégia salva!");
+
+    } else {
+
+        setSaveMode(true);
+
+        setShowStrategies(true);
+
+    }
+
+}
 
     const simulationRef = useRef(new Simulation());
     const [, forceUpdate] = useState(0);
@@ -48,7 +80,7 @@ parar()`);
 
         <div className="window">
 
-            <TopBar/>
+            <TopBar />
 
             <div className="content">
 
@@ -59,6 +91,10 @@ parar()`);
                         code={code}
 
                         setCode={setCode}
+
+                        openStrategies={() => setShowStrategies(true)}
+
+                        save={save}
 
                     />
 
@@ -79,12 +115,34 @@ parar()`);
                 </div>
 
                 <div className="card">
-                    <ControlPanel execute={execute}reset={() => simulationRef.current.reset()}/>
+                    <ControlPanel
+                        execute={execute}
+                        reset={() => simulationRef.current.reset()}
+                    />
                 </div>
 
             </aside>
 
             </div>
+
+            <StrategyModal
+                open={showStrategies}
+                saveMode={saveMode}
+                onClose={() => {
+                
+                    setShowStrategies(false);
+                
+                    setSaveMode(false);
+                
+                }}
+                currentCode={code}
+                onLoad={(name, savedCode) => {
+                        
+                setCurrentStrategy(name);
+                setCode(savedCode);
+                        
+            }}
+            />
 
         </div>
 

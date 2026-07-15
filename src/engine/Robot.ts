@@ -1,4 +1,5 @@
 import type { RobotConfig } from "../types/Robot.ts";
+import Collision from "./Collision.ts";
 
 export default class Robot{
 
@@ -110,6 +111,10 @@ export default class Robot{
 
     update(deltaTime: number){
 
+        const oldX = this.x;
+        const oldY = this.y;
+        const oldAngle = this.angle;
+
         if(this.speed !== 0){
 
             this.moveForward(
@@ -138,6 +143,14 @@ export default class Robot{
             
             );
         
+        }
+
+        if (Collision.checkWalls(this) || Collision.checkRamps(this) || Collision.checkDepots(this)) {
+
+            this.x = oldX;
+            this.y = oldY;
+            this.angle = oldAngle;
+
         }
 
     }  

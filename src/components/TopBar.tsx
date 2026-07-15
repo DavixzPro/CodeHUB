@@ -17,9 +17,7 @@ export default function TopBar() {
                 <span>CodeTECH</span>
 
                 <span className="version">
-
-                    Alpha v1.0
-
+                    #17893
                 </span>
 
             </div>
